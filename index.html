@@ -7,74 +7,104 @@
   <style>
     :root {
       color-scheme: light;
-      --bg: #f7f8fb;
+      --bg: #f5f7f4;
       --panel: #ffffff;
-      --ink: #172033;
-      --muted: #697386;
-      --line: #dfe4ee;
-      --accent: #2374ab;
-      --accent-dark: #175b89;
+      --ink: #17221c;
+      --muted: #68736d;
+      --line: #dde5dc;
+      --accent: #2d7d5a;
+      --accent-dark: #1f6043;
+      --accent-soft: #dff0e7;
+      --warn: #b86418;
+      --danger: #b33a3a;
+      --shadow: 0 18px 50px rgba(34, 59, 45, 0.12);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       min-height: 100vh;
-      background: var(--bg);
+      background: radial-gradient(circle at top left, rgba(211, 235, 210, 0.95), transparent 36rem), linear-gradient(135deg, #fbf8f0 0%, #f5f7f4 45%, #e9f2ee 100%);
       color: var(--ink);
     }
 
-    header {
-      padding: 28px clamp(18px, 4vw, 44px) 18px;
-      background: var(--panel);
-      border-bottom: 1px solid var(--line);
+    header { padding: 34px clamp(18px, 4vw, 48px) 20px; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 22px;
+      align-items: end;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--accent-dark);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     h1 {
-      margin: 0 0 8px;
-      font-size: clamp(28px, 4vw, 42px);
-      line-height: 1.05;
+      margin: 0;
+      max-width: 720px;
+      font-size: clamp(34px, 5vw, 62px);
+      line-height: 0.98;
     }
 
     header p {
-      margin: 0;
+      margin: 16px 0 0;
       color: var(--muted);
-      max-width: 760px;
-      line-height: 1.5;
+      max-width: 700px;
+      line-height: 1.6;
+      font-size: 16px;
     }
+
+    .target-pill {
+      min-width: 230px;
+      padding: 16px 18px;
+      border: 1px solid rgba(45, 125, 90, 0.2);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.76);
+      box-shadow: var(--shadow);
+    }
+
+    .target-pill span { display: block; color: var(--muted); font-size: 13px; }
+    .target-pill strong { display: block; margin-top: 5px; font-size: 28px; }
 
     main {
       display: grid;
-      grid-template-columns: minmax(300px, 420px) minmax(0, 1fr);
+      grid-template-columns: minmax(310px, 420px) minmax(0, 1fr);
       gap: 22px;
-      padding: 24px clamp(18px, 4vw, 44px) 38px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 10px clamp(18px, 4vw, 48px) 42px;
     }
 
-    section {
-      min-width: 0;
-    }
+    section { min-width: 0; }
 
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--line);
+    .panel,
+    .target-card,
+    .meal,
+    .empty {
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(221, 229, 220, 0.9);
       border-radius: 8px;
-      padding: 18px;
-      box-shadow: 0 8px 24px rgba(23, 32, 51, 0.06);
+      box-shadow: var(--shadow);
     }
 
-    h2 {
-      margin: 0 0 14px;
-      font-size: 20px;
-    }
+    .panel { padding: 18px; }
+    h2 { margin: 0 0 14px; font-size: 21px; }
 
     label {
       display: block;
       margin: 14px 0 6px;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 14px;
     }
 
@@ -82,7 +112,7 @@
     select,
     button {
       width: 100%;
-      min-height: 42px;
+      min-height: 44px;
       border-radius: 7px;
       border: 1px solid var(--line);
       font: inherit;
@@ -90,28 +120,33 @@
 
     input,
     select {
-      padding: 9px 10px;
+      padding: 10px 11px;
       background: #fff;
       color: var(--ink);
     }
 
+    input:focus,
+    select:focus {
+      outline: 3px solid rgba(45, 125, 90, 0.16);
+      border-color: var(--accent);
+    }
+
     button {
-      padding: 10px 12px;
+      padding: 11px 13px;
       border: 0;
       background: var(--accent);
       color: #fff;
-      font-weight: 800;
+      font-weight: 850;
       cursor: pointer;
     }
 
-    button:hover {
-      background: var(--accent-dark);
-    }
+    button:hover { background: var(--accent-dark); }
 
     button.secondary {
-      background: #edf4f8;
+      min-height: 38px;
+      background: var(--accent-soft);
       color: var(--accent-dark);
-      border: 1px solid #cfe0ea;
+      border: 1px solid #c8e3d5;
     }
 
     .grid {
@@ -123,41 +158,38 @@
     .preview {
       display: grid;
       place-items: center;
-      min-height: 210px;
+      min-height: 230px;
       margin-top: 12px;
       overflow: hidden;
-      border: 1px dashed #b8c3d4;
+      border: 1px dashed #afbfad;
       border-radius: 8px;
-      background: #f9fbfd;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(226, 239, 224, 0.72)), #f9fbf7;
       color: var(--muted);
       text-align: center;
-      padding: 16px;
+      padding: 18px;
     }
 
     .preview img {
       width: 100%;
       height: 100%;
-      max-height: 300px;
+      max-height: 330px;
       object-fit: cover;
-      border-radius: 6px;
+      border-radius: 7px;
     }
 
     .estimate {
       margin-top: 16px;
       padding: 14px;
-      border: 1px solid #cfe0ea;
+      border: 1px solid #c8e3d5;
       border-radius: 8px;
-      background: #f4f9fc;
+      background: #f4faf5;
     }
 
-    .estimate strong {
-      display: block;
-      margin-bottom: 8px;
-    }
+    .estimate strong { display: block; margin-bottom: 8px; }
 
     .macro-row {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 8px;
       margin-top: 8px;
     }
@@ -169,7 +201,9 @@
       border: 1px solid var(--line);
     }
 
-    .macro span {
+    .macro span,
+    .target-card span,
+    .summary-card span {
       display: block;
       color: var(--muted);
       font-size: 12px;
@@ -185,111 +219,152 @@
 
     .toolbar input {
       width: auto;
+      min-width: 170px;
+      background: rgba(255, 255, 255, 0.9);
     }
 
-    .totals {
+    .targets {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
       margin-bottom: 16px;
     }
 
-    .total {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 14px;
-    }
+    .target-card { padding: 13px; }
+    .target-card strong { display: block; margin-top: 4px; font-size: 20px; }
 
-    .total span {
-      display: block;
-      margin-bottom: 4px;
+    .target-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
       color: var(--muted);
-      font-size: 13px;
+      font-size: 12px;
     }
 
-    .meal {
-      margin-top: 14px;
-      background: var(--panel);
+    .meter {
+      width: 100%;
+      height: 8px;
+      margin-top: 10px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: #e7ece6;
+    }
+
+    .meter i {
+      display: block;
+      width: min(var(--fill), 100%);
+      height: 100%;
+      border-radius: inherit;
+      background: var(--accent);
+    }
+
+    .target-card.over .meter i { background: var(--danger); }
+    .target-card.close .meter i { background: var(--warn); }
+    .status { font-weight: 800; color: var(--accent-dark); }
+    .target-card.over .status { color: var(--danger); }
+    .target-card.close .status { color: var(--warn); }
+
+    .summary-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .summary-card {
+      padding: 13px;
       border: 1px solid var(--line);
       border-radius: 8px;
-      overflow: hidden;
+      background: rgba(255, 255, 255, 0.72);
     }
+
+    .summary-card strong { display: block; margin-top: 4px; font-size: 18px; }
+
+    .meal { margin-top: 14px; overflow: hidden; }
 
     .meal h3 {
       display: flex;
       justify-content: space-between;
       gap: 10px;
       margin: 0;
-      padding: 13px 15px;
-      background: #f2f5f9;
+      padding: 14px 16px;
+      background: linear-gradient(135deg, #eef7ec, #f8faf7);
       font-size: 16px;
     }
 
-    .meal ul {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
+    .meal ul { margin: 0; padding: 0; list-style: none; }
 
     .meal li {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 10px;
-      padding: 13px 15px;
+      padding: 14px 16px;
       border-top: 1px solid var(--line);
     }
 
     .meal small {
+      display: block;
+      margin-top: 3px;
       color: var(--muted);
+      line-height: 1.45;
     }
 
     .empty {
-      padding: 22px;
-      border: 1px dashed #b8c3d4;
-      border-radius: 8px;
+      padding: 24px;
       color: var(--muted);
       text-align: center;
-      background: #fff;
+      border-style: dashed;
     }
 
     .note {
-      margin-top: 10px;
+      margin: 10px 0 0;
       color: var(--muted);
       font-size: 13px;
       line-height: 1.45;
     }
 
-    @media (max-width: 860px) {
-      main {
-        grid-template-columns: 1fr;
-      }
+    @media (max-width: 920px) {
+      .hero,
+      main { grid-template-columns: 1fr; }
+      .target-pill { min-width: 0; }
+    }
 
-      .totals,
-      .macro-row {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+    @media (max-width: 720px) {
+      .targets,
+      .summary-strip,
+      .macro-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .toolbar { align-items: stretch; flex-direction: column; }
+      .toolbar input { width: 100%; }
+    }
 
-      .toolbar {
-        align-items: stretch;
-        flex-direction: column;
-      }
-
-      .toolbar input {
-        width: 100%;
-      }
+    @media (max-width: 440px) {
+      .targets,
+      .summary-strip,
+      .macro-row,
+      .grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Macro Tracker</h1>
-    <p>Upload a meal photo, estimate calories and macros, then add it to your daily log. Entries are saved locally in this browser.</p>
+    <div class="hero">
+      <div>
+        <p class="eyebrow">Daily nutrition dashboard</p>
+        <h1>Track each meal against your macro targets.</h1>
+        <p>Upload a meal photo, estimate macros, and see how the day is shaping up across protein, carbs, fat, sugar, saturated fat, and calories.</p>
+      </div>
+      <div class="target-pill" aria-label="Daily calorie target">
+        <span>Daily calorie ceiling</span>
+        <strong>&lt;1568</strong>
+      </div>
+    </div>
   </header>
 
   <main>
     <section class="panel" aria-labelledby="photo-title">
-      <h2 id="photo-title">Photo Macro Estimate</h2>
+      <h2 id="photo-title">Add a Meal</h2>
 
       <label for="meal-photo">Meal photo</label>
       <input id="meal-photo" type="file" accept="image/*">
@@ -317,7 +392,7 @@
       <button id="estimate-btn" type="button">Estimate Macros</button>
 
       <div id="estimate" class="estimate" hidden></div>
-      <p class="note">Photo recognition is a lightweight local heuristic: it uses the filename and the hint above. Treat estimates as a starting point and adjust as needed.</p>
+      <p class="note">This version uses local keyword estimates from your filename or hint. It is best treated as a quick draft, not medical or label-grade nutrition advice.</p>
     </section>
 
     <section aria-labelledby="log-title">
@@ -326,21 +401,32 @@
         <input id="log-date" type="date">
       </div>
 
-      <div id="totals" class="totals"></div>
+      <div id="targets" class="targets"></div>
+      <div id="summary" class="summary-strip"></div>
       <div id="log"></div>
     </section>
   </main>
 
   <script>
+    const dailyTargets = {
+      protein: { label: "Protein", target: 90, unit: "g", type: "minimum" },
+      carbs: { label: "Carbs", target: 209, unit: "g", type: "target" },
+      fat: { label: "Fat", target: 45, unit: "g", type: "target" },
+      sugar: { label: "Sugar", target: 42, unit: "g", type: "maximum" },
+      satFat: { label: "Saturated fat", target: 18, unit: "g", type: "maximum" },
+      calories: { label: "Calories", target: 1568, unit: "", type: "maximum" }
+    };
+
     const foodPatterns = [
-      { keys: ["chicken", "turkey"], name: "Chicken meal", calories: 430, protein: 42, carbs: 34, fat: 12 },
-      { keys: ["salmon", "fish", "tuna"], name: "Fish meal", calories: 480, protein: 38, carbs: 28, fat: 22 },
-      { keys: ["rice", "bowl"], name: "Rice bowl", calories: 560, protein: 28, carbs: 72, fat: 18 },
-      { keys: ["pasta", "noodle"], name: "Pasta meal", calories: 620, protein: 24, carbs: 82, fat: 20 },
-      { keys: ["egg", "omelet"], name: "Egg breakfast", calories: 360, protein: 24, carbs: 14, fat: 22 },
-      { keys: ["shake", "protein", "smoothie"], name: "Protein shake", calories: 280, protein: 32, carbs: 24, fat: 6 },
-      { keys: ["salad"], name: "Protein salad", calories: 340, protein: 26, carbs: 22, fat: 16 },
-      { keys: ["burger"], name: "Burger meal", calories: 720, protein: 34, carbs: 58, fat: 38 }
+      { keys: ["chicken", "turkey"], name: "Chicken meal", calories: 430, protein: 42, carbs: 34, fat: 12, sugar: 4, satFat: 3 },
+      { keys: ["salmon", "fish", "tuna"], name: "Fish meal", calories: 480, protein: 38, carbs: 28, fat: 22, sugar: 3, satFat: 4 },
+      { keys: ["rice", "bowl"], name: "Rice bowl", calories: 560, protein: 28, carbs: 72, fat: 18, sugar: 7, satFat: 5 },
+      { keys: ["pasta", "noodle"], name: "Pasta meal", calories: 620, protein: 24, carbs: 82, fat: 20, sugar: 9, satFat: 6 },
+      { keys: ["egg", "omelet"], name: "Egg breakfast", calories: 360, protein: 24, carbs: 14, fat: 22, sugar: 3, satFat: 7 },
+      { keys: ["shake", "protein", "smoothie"], name: "Protein shake", calories: 280, protein: 32, carbs: 24, fat: 6, sugar: 16, satFat: 2 },
+      { keys: ["salad"], name: "Protein salad", calories: 340, protein: 26, carbs: 22, fat: 16, sugar: 8, satFat: 3 },
+      { keys: ["burger"], name: "Burger meal", calories: 720, protein: 34, carbs: 58, fat: 38, sugar: 10, satFat: 13 },
+      { keys: ["dessert", "cake", "cookie"], name: "Dessert", calories: 420, protein: 5, carbs: 58, fat: 18, sugar: 34, satFat: 10 }
     ];
 
     const fallbackEstimate = {
@@ -348,11 +434,13 @@
       calories: 520,
       protein: 30,
       carbs: 52,
-      fat: 20
+      fat: 20,
+      sugar: 9,
+      satFat: 6
     };
 
     const state = {
-      entries: JSON.parse(localStorage.getItem("macroEntries") || "[]"),
+      entries: JSON.parse(localStorage.getItem("macroEntries") || "[]").map(normalizeEntry),
       estimate: null
     };
 
@@ -364,7 +452,8 @@
     const estimateBtn = document.querySelector("#estimate-btn");
     const estimateBox = document.querySelector("#estimate");
     const logDate = document.querySelector("#log-date");
-    const totalsBox = document.querySelector("#totals");
+    const targetsBox = document.querySelector("#targets");
+    const summaryBox = document.querySelector("#summary");
     const logBox = document.querySelector("#log");
 
     logDate.value = new Date().toISOString().slice(0, 10);
@@ -398,6 +487,18 @@
 
     logDate.addEventListener("change", renderLog);
 
+    function normalizeEntry(entry) {
+      return {
+        calories: 0,
+        protein: 0,
+        carbs: 0,
+        fat: 0,
+        sugar: 0,
+        satFat: 0,
+        ...entry
+      };
+    }
+
     function scaleEstimate(base, amount) {
       return {
         name: foodName.value.trim() || base.name,
@@ -405,7 +506,9 @@
         calories: Math.round(base.calories * amount),
         protein: Math.round(base.protein * amount),
         carbs: Math.round(base.carbs * amount),
-        fat: Math.round(base.fat * amount)
+        fat: Math.round(base.fat * amount),
+        sugar: Math.round(base.sugar * amount),
+        satFat: Math.round(base.satFat * amount)
       };
     }
 
@@ -419,6 +522,8 @@
           ${macroCell("Protein", `${item.protein}g`)}
           ${macroCell("Carbs", `${item.carbs}g`)}
           ${macroCell("Fat", `${item.fat}g`)}
+          ${macroCell("Sugar", `${item.sugar}g`)}
+          ${macroCell("Sat fat", `${item.satFat}g`)}
         </div>
         <button id="add-estimate" type="button" style="margin-top: 12px;">Add to Daily Log</button>
       `;
@@ -453,18 +558,23 @@
         calories: sum.calories + entry.calories,
         protein: sum.protein + entry.protein,
         carbs: sum.carbs + entry.carbs,
-        fat: sum.fat + entry.fat
-      }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
+        fat: sum.fat + entry.fat,
+        sugar: sum.sugar + entry.sugar,
+        satFat: sum.satFat + entry.satFat
+      }), { calories: 0, protein: 0, carbs: 0, fat: 0, sugar: 0, satFat: 0 });
 
-      totalsBox.innerHTML = `
-        ${totalCell("Calories", totals.calories)}
-        ${totalCell("Protein", `${totals.protein}g`)}
-        ${totalCell("Carbs", `${totals.carbs}g`)}
-        ${totalCell("Fat", `${totals.fat}g`)}
+      targetsBox.innerHTML = Object.entries(dailyTargets)
+        .map(([key, target]) => targetCard(key, target, totals[key]))
+        .join("");
+
+      summaryBox.innerHTML = `
+        ${summaryCard("Meals logged", todaysEntries.length)}
+        ${summaryCard("Protein remaining", `${Math.max(dailyTargets.protein.target - totals.protein, 0)}g`)}
+        ${summaryCard("Calories left", Math.max(dailyTargets.calories.target - totals.calories, 0))}
       `;
 
       if (!todaysEntries.length) {
-        logBox.innerHTML = '<div class="empty">No meals logged for this day yet.</div>';
+        logBox.innerHTML = '<div class="empty">No meals logged for this day yet. Add a photo estimate to start filling the targets.</div>';
         return;
       }
 
@@ -481,8 +591,8 @@
                 ${entries.map(entry => `
                   <li>
                     <div>
-                      <strong>${escapeHtml(entry.name)}</strong><br>
-                      <small>${entry.calories} cal - ${entry.protein}g P - ${entry.carbs}g C - ${entry.fat}g F - ${escapeHtml(entry.source)}</small>
+                      <strong>${escapeHtml(entry.name)}</strong>
+                      <small>${entry.calories} cal - ${entry.protein}g P - ${entry.carbs}g C - ${entry.fat}g F - ${entry.sugar}g sugar - ${entry.satFat}g sat fat - ${escapeHtml(entry.source)}</small>
                     </div>
                     <button class="secondary" type="button" data-remove="${entry.id}" aria-label="Remove ${escapeHtml(entry.name)}">Remove</button>
                   </li>
@@ -498,12 +608,51 @@
       });
     }
 
+    function targetCard(key, target, value) {
+      const percent = target.target === 0 ? 0 : Math.round((value / target.target) * 100);
+      const remaining = target.target - value;
+      const className = cardStatus(target, value, percent);
+      return `
+        <article class="target-card ${className}" style="--fill: ${Math.min(percent, 100)}%;">
+          <span>${target.label}</span>
+          <strong>${formatValue(value, target.unit)} / ${formatValue(target.target, target.unit)}</strong>
+          <div class="meter" aria-hidden="true"><i></i></div>
+          <div class="target-meta">
+            <span>${percent}%</span>
+            <span class="status">${statusText(target, remaining)}</span>
+          </div>
+        </article>
+      `;
+    }
+
+    function cardStatus(target, value, percent) {
+      if (target.type === "minimum") {
+        return value >= target.target ? "" : percent >= 85 ? "close" : "";
+      }
+      if (value > target.target) return "over";
+      return percent >= 85 ? "close" : "";
+    }
+
+    function statusText(target, remaining) {
+      const abs = Math.abs(remaining);
+      const value = formatValue(abs, target.unit);
+      if (target.type === "minimum") {
+        return remaining <= 0 ? "Hit" : `${value} to go`;
+      }
+      if (remaining < 0) return `${value} over`;
+      return `${value} left`;
+    }
+
+    function formatValue(value, unit) {
+      return `${Math.round(value)}${unit}`;
+    }
+
     function macroCell(label, value) {
       return `<div class="macro"><span>${label}</span><strong>${value}</strong></div>`;
     }
 
-    function totalCell(label, value) {
-      return `<div class="total"><span>${label}</span><strong>${value}</strong></div>`;
+    function summaryCard(label, value) {
+      return `<div class="summary-card"><span>${label}</span><strong>${value}</strong></div>`;
     }
 
     function escapeHtml(value) {
