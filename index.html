@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Macro Tracker</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8fb;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #697386;
+      --line: #dfe4ee;
+      --accent: #2374ab;
+      --accent-dark: #175b89;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    header {
+      padding: 28px clamp(18px, 4vw, 44px) 18px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.05;
+    }
+
+    header p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 760px;
+      line-height: 1.5;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(300px, 420px) minmax(0, 1fr);
+      gap: 22px;
+      padding: 24px clamp(18px, 4vw, 44px) 38px;
+    }
+
+    section {
+      min-width: 0;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: 0 8px 24px rgba(23, 32, 51, 0.06);
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 6px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    input,
+    select,
+    button {
+      width: 100%;
+      min-height: 42px;
+      border-radius: 7px;
+      border: 1px solid var(--line);
+      font: inherit;
+    }
+
+    input,
+    select {
+      padding: 9px 10px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    button {
+      padding: 10px 12px;
+      border: 0;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: var(--accent-dark);
+    }
+
+    button.secondary {
+      background: #edf4f8;
+      color: var(--accent-dark);
+      border: 1px solid #cfe0ea;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .preview {
+      display: grid;
+      place-items: center;
+      min-height: 210px;
+      margin-top: 12px;
+      overflow: hidden;
+      border: 1px dashed #b8c3d4;
+      border-radius: 8px;
+      background: #f9fbfd;
+      color: var(--muted);
+      text-align: center;
+      padding: 16px;
+    }
+
+    .preview img {
+      width: 100%;
+      height: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .estimate {
+      margin-top: 16px;
+      padding: 14px;
+      border: 1px solid #cfe0ea;
+      border-radius: 8px;
+      background: #f4f9fc;
+    }
+
+    .estimate strong {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .macro-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .macro {
+      padding: 10px;
+      border-radius: 7px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .macro span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .toolbar input {
+      width: auto;
+    }
+
+    .totals {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .total {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .total span {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .meal {
+      margin-top: 14px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .meal h3 {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 0;
+      padding: 13px 15px;
+      background: #f2f5f9;
+      font-size: 16px;
+    }
+
+    .meal ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .meal li {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      padding: 13px 15px;
+      border-top: 1px solid var(--line);
+    }
+
+    .meal small {
+      color: var(--muted);
+    }
+
+    .empty {
+      padding: 22px;
+      border: 1px dashed #b8c3d4;
+      border-radius: 8px;
+      color: var(--muted);
+      text-align: center;
+      background: #fff;
+    }
+
+    .note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 860px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .totals,
+      .macro-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .toolbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .toolbar input {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Macro Tracker</h1>
+    <p>Upload a meal photo, estimate calories and macros, then add it to your daily log. Entries are saved locally in this browser.</p>
+  </header>
+
+  <main>
+    <section class="panel" aria-labelledby="photo-title">
+      <h2 id="photo-title">Photo Macro Estimate</h2>
+
+      <label for="meal-photo">Meal photo</label>
+      <input id="meal-photo" type="file" accept="image/*">
+      <div id="preview" class="preview">Choose a meal photo to preview it here.</div>
+
+      <div class="grid">
+        <div>
+          <label for="meal-slot">Meal</label>
+          <select id="meal-slot">
+            <option>Breakfast</option>
+            <option>Lunch</option>
+            <option>Dinner</option>
+            <option>Snack</option>
+          </select>
+        </div>
+        <div>
+          <label for="servings">Servings</label>
+          <input id="servings" type="number" min="0.25" step="0.25" value="1">
+        </div>
+      </div>
+
+      <label for="food-name">Food name or hint</label>
+      <input id="food-name" placeholder="e.g. chicken rice, salmon bowl">
+
+      <button id="estimate-btn" type="button">Estimate Macros</button>
+
+      <div id="estimate" class="estimate" hidden></div>
+      <p class="note">Photo recognition is a lightweight local heuristic: it uses the filename and the hint above. Treat estimates as a starting point and adjust as needed.</p>
+    </section>
+
+    <section aria-labelledby="log-title">
+      <div class="toolbar">
+        <h2 id="log-title">Daily Log</h2>
+        <input id="log-date" type="date">
+      </div>
+
+      <div id="totals" class="totals"></div>
+      <div id="log"></div>
+    </section>
+  </main>
+
+  <script>
+    const foodPatterns = [
+      { keys: ["chicken", "turkey"], name: "Chicken meal", calories: 430, protein: 42, carbs: 34, fat: 12 },
+      { keys: ["salmon", "fish", "tuna"], name: "Fish meal", calories: 480, protein: 38, carbs: 28, fat: 22 },
+      { keys: ["rice", "bowl"], name: "Rice bowl", calories: 560, protein: 28, carbs: 72, fat: 18 },
+      { keys: ["pasta", "noodle"], name: "Pasta meal", calories: 620, protein: 24, carbs: 82, fat: 20 },
+      { keys: ["egg", "omelet"], name: "Egg breakfast", calories: 360, protein: 24, carbs: 14, fat: 22 },
+      { keys: ["shake", "protein", "smoothie"], name: "Protein shake", calories: 280, protein: 32, carbs: 24, fat: 6 },
+      { keys: ["salad"], name: "Protein salad", calories: 340, protein: 26, carbs: 22, fat: 16 },
+      { keys: ["burger"], name: "Burger meal", calories: 720, protein: 34, carbs: 58, fat: 38 }
+    ];
+
+    const fallbackEstimate = {
+      name: "Mixed meal",
+      calories: 520,
+      protein: 30,
+      carbs: 52,
+      fat: 20
+    };
+
+    const state = {
+      entries: JSON.parse(localStorage.getItem("macroEntries") || "[]"),
+      estimate: null
+    };
+
+    const photoInput = document.querySelector("#meal-photo");
+    const preview = document.querySelector("#preview");
+    const mealSlot = document.querySelector("#meal-slot");
+    const servings = document.querySelector("#servings");
+    const foodName = document.querySelector("#food-name");
+    const estimateBtn = document.querySelector("#estimate-btn");
+    const estimateBox = document.querySelector("#estimate");
+    const logDate = document.querySelector("#log-date");
+    const totalsBox = document.querySelector("#totals");
+    const logBox = document.querySelector("#log");
+
+    logDate.value = new Date().toISOString().slice(0, 10);
+
+    photoInput.addEventListener("change", () => {
+      const file = photoInput.files[0];
+      if (!file) {
+        preview.textContent = "Choose a meal photo to preview it here.";
+        return;
+      }
+
+      const url = URL.createObjectURL(file);
+      preview.innerHTML = "";
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = "Selected meal";
+      preview.appendChild(img);
+
+      if (!foodName.value.trim()) {
+        foodName.value = file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ");
+      }
+    });
+
+    estimateBtn.addEventListener("click", () => {
+      const hint = `${foodName.value} ${photoInput.files[0]?.name || ""}`.toLowerCase();
+      const matched = foodPatterns.find(item => item.keys.some(key => hint.includes(key))) || fallbackEstimate;
+      const amount = Math.max(Number(servings.value) || 1, 0.25);
+      state.estimate = scaleEstimate(matched, amount);
+      renderEstimate();
+    });
+
+    logDate.addEventListener("change", renderLog);
+
+    function scaleEstimate(base, amount) {
+      return {
+        name: foodName.value.trim() || base.name,
+        meal: mealSlot.value,
+        calories: Math.round(base.calories * amount),
+        protein: Math.round(base.protein * amount),
+        carbs: Math.round(base.carbs * amount),
+        fat: Math.round(base.fat * amount)
+      };
+    }
+
+    function renderEstimate() {
+      const item = state.estimate;
+      estimateBox.hidden = false;
+      estimateBox.innerHTML = `
+        <strong>${escapeHtml(item.name)} for ${escapeHtml(item.meal)}</strong>
+        <div class="macro-row">
+          ${macroCell("Calories", item.calories)}
+          ${macroCell("Protein", `${item.protein}g`)}
+          ${macroCell("Carbs", `${item.carbs}g`)}
+          ${macroCell("Fat", `${item.fat}g`)}
+        </div>
+        <button id="add-estimate" type="button" style="margin-top: 12px;">Add to Daily Log</button>
+      `;
+      document.querySelector("#add-estimate").addEventListener("click", addEstimate);
+    }
+
+    function addEstimate() {
+      if (!state.estimate) return;
+      state.entries.push({
+        ...state.estimate,
+        id: crypto.randomUUID(),
+        date: logDate.value,
+        source: photoInput.files[0]?.name || "manual hint"
+      });
+      save();
+      renderLog();
+    }
+
+    function removeEntry(id) {
+      state.entries = state.entries.filter(entry => entry.id !== id);
+      save();
+      renderLog();
+    }
+
+    function save() {
+      localStorage.setItem("macroEntries", JSON.stringify(state.entries));
+    }
+
+    function renderLog() {
+      const todaysEntries = state.entries.filter(entry => entry.date === logDate.value);
+      const totals = todaysEntries.reduce((sum, entry) => ({
+        calories: sum.calories + entry.calories,
+        protein: sum.protein + entry.protein,
+        carbs: sum.carbs + entry.carbs,
+        fat: sum.fat + entry.fat
+      }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
+
+      totalsBox.innerHTML = `
+        ${totalCell("Calories", totals.calories)}
+        ${totalCell("Protein", `${totals.protein}g`)}
+        ${totalCell("Carbs", `${totals.carbs}g`)}
+        ${totalCell("Fat", `${totals.fat}g`)}
+      `;
+
+      if (!todaysEntries.length) {
+        logBox.innerHTML = '<div class="empty">No meals logged for this day yet.</div>';
+        return;
+      }
+
+      const meals = ["Breakfast", "Lunch", "Dinner", "Snack"];
+      logBox.innerHTML = meals
+        .map(meal => {
+          const entries = todaysEntries.filter(entry => entry.meal === meal);
+          if (!entries.length) return "";
+          const mealTotals = entries.reduce((sum, entry) => sum + entry.calories, 0);
+          return `
+            <article class="meal">
+              <h3><span>${meal}</span><span>${mealTotals} cal</span></h3>
+              <ul>
+                ${entries.map(entry => `
+                  <li>
+                    <div>
+                      <strong>${escapeHtml(entry.name)}</strong><br>
+                      <small>${entry.calories} cal · ${entry.protein}g P · ${entry.carbs}g C · ${entry.fat}g F · ${escapeHtml(entry.source)}</small>
+                    </div>
+                    <button class="secondary" type="button" data-remove="${entry.id}" aria-label="Remove ${escapeHtml(entry.name)}">Remove</button>
+                  </li>
+                `).join("")}
+              </ul>
+            </article>
+          `;
+        })
+        .join("");
+
+      document.querySelectorAll("[data-remove]").forEach(button => {
+        button.addEventListener("click", () => removeEntry(button.dataset.remove));
+      });
+    }
+
+    function macroCell(label, value) {
+      return `<div class="macro"><span>${label}</span><strong>${value}</strong></div>`;
+    }
+
+    function totalCell(label, value) {
+      return `<div class="total"><span>${label}</span><strong>${value}</strong></div>`;
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      })[char]);
+    }
+
+    renderLog();
+  </script>
+</body>
+</html>
