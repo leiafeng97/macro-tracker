@@ -911,10 +911,18 @@
           <label for="food-name" style="margin-top: 13px;">Food name or hint</label>
           <input id="food-name" placeholder="e.g. chicken rice, salmon bowl">
 
+          <div id="gemini-key-row" style="margin-top: 12px;">
+            <label for="gemini-key" style="font-size: .75rem;">Gemini API key <span style="opacity:.5;">(for smarter estimates)</span></label>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input id="gemini-key" type="password" placeholder="Paste key from aistudio.google.com" style="flex: 1;">
+              <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color: var(--carbs); font-size: .75rem; white-space: nowrap;">Get free key</a>
+            </div>
+          </div>
+
           <button id="estimate-btn" type="button" style="margin-top: 14px;">Estimate Macros</button>
 
           <div id="estimate" class="estimate" hidden></div>
-          <p class="note">Known items use curated estimates; unknown items search Open Food Facts, then USDA FoodData Central. Treat estimates as quick drafts, not label-grade nutrition advice.</p>
+          <p class="note">With a Gemini key, photos and food names are analysed by AI. Without one, estimates come from Open Food Facts and USDA. Treat all estimates as approximations.</p>
         </div>
 
         <div id="mode-manual" class="add-mode">
@@ -953,11 +961,6 @@
             <button class="secondary" id="import-btn" type="button">Import JSON</button>
             <input id="import-file" type="file" accept=".json,application/json" hidden>
           </div>
-          <div style="margin-top: 14px;">
-            <label for="gemini-key">Gemini API key (for photo analysis)</label>
-            <input id="gemini-key" type="password" placeholder="Paste key from aistudio.google.com">
-            <p class="note" style="margin-top: 6px;">Free key from <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color: var(--carbs);">Google AI Studio</a>. Stored locally, never sent anywhere except Google's Gemini API.</p>
-          </div>
         </div>
       </section>
     </main>
@@ -991,10 +994,42 @@
     const mealOrder = ["Breakfast", "Snack", "Lunch", "Dinner", "Beverage", "Evening"];
 
     const geminiKeyInput = document.querySelector("#gemini-key");
-    geminiKeyInput.value = localStorage.getItem("geminiApiKey") || "";
+    const geminiKeyRow = document.querySelector("#gemini-key-row");
+    const savedKey = localStorage.getItem("geminiApiKey") || "";
+    geminiKeyInput.value = savedKey;
+
+    function updateGeminiKeyUI() {
+      const hasKey = !!localStorage.getItem("geminiApiKey");
+      if (hasKey) {
+        geminiKeyRow.innerHTML = `<span style="font-size:.75rem; opacity:.6;">✓ Gemini key saved</span> <a href="#" id="gemini-key-change" style="font-size:.75rem; color: var(--carbs);">Change</a>`;
+        geminiKeyRow.querySelector("#gemini-key-change").addEventListener("click", (e) => {
+          e.preventDefault();
+          localStorage.removeItem("geminiApiKey");
+          geminiKeyRow.innerHTML = `
+            <label for="gemini-key" style="font-size: .75rem;">Gemini API key <span style="opacity:.5;">(for smarter estimates)</span></label>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input id="gemini-key" type="password" placeholder="Paste key from aistudio.google.com" style="flex: 1;">
+              <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color: var(--carbs); font-size: .75rem; white-space: nowrap;">Get free key</a>
+            </div>`;
+          const newInput = geminiKeyRow.querySelector("#gemini-key");
+          newInput.focus();
+          newInput.addEventListener("change", () => {
+            if (newInput.value.trim()) {
+              localStorage.setItem("geminiApiKey", newInput.value.trim());
+              updateGeminiKeyUI();
+            }
+          });
+        });
+      }
+    }
+
     geminiKeyInput.addEventListener("change", () => {
-      localStorage.setItem("geminiApiKey", geminiKeyInput.value.trim());
+      if (geminiKeyInput.value.trim()) {
+        localStorage.setItem("geminiApiKey", geminiKeyInput.value.trim());
+        updateGeminiKeyUI();
+      }
     });
+    updateGeminiKeyUI();
 
     const state = {
       entries: JSON.parse(localStorage.getItem("macroEntries") || "[]").map(normalizeEntry),
