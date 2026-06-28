@@ -953,6 +953,11 @@
             <button class="secondary" id="import-btn" type="button">Import JSON</button>
             <input id="import-file" type="file" accept=".json,application/json" hidden>
           </div>
+          <div style="margin-top: 14px;">
+            <label for="gemini-key">Gemini API key (for photo analysis)</label>
+            <input id="gemini-key" type="password" placeholder="Paste key from aistudio.google.com">
+            <p class="note" style="margin-top: 6px;">Free key from <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color: var(--carbs);">Google AI Studio</a>. Stored locally, never sent anywhere except Google's Gemini API.</p>
+          </div>
         </div>
       </section>
     </main>
@@ -985,20 +990,11 @@
 
     const mealOrder = ["Breakfast", "Snack", "Lunch", "Dinner", "Beverage", "Evening"];
 
-    const foodPatterns = [
-      { keys: ["americano", "black coffee", "espresso"], name: "Americano", calories: 5, protein: 0, carbs: 1, fat: 0, sugar: 0, satFat: 0 },
-      { keys: ["water", "sparkling water", "soda water"], name: "Water", calories: 0, protein: 0, carbs: 0, fat: 0, sugar: 0, satFat: 0 },
-      { keys: ["chicken", "turkey"], name: "Chicken meal", calories: 430, protein: 42, carbs: 34, fat: 12, sugar: 4, satFat: 3 },
-      { keys: ["salmon", "fish", "tuna"], name: "Fish meal", calories: 480, protein: 38, carbs: 28, fat: 22, sugar: 3, satFat: 4 },
-      { keys: ["rice", "bowl"], name: "Rice bowl", calories: 560, protein: 28, carbs: 72, fat: 18, sugar: 7, satFat: 5 },
-      { keys: ["pasta", "noodle"], name: "Pasta meal", calories: 620, protein: 24, carbs: 82, fat: 20, sugar: 9, satFat: 6 },
-      { keys: ["egg", "omelet"], name: "Egg breakfast", calories: 360, protein: 24, carbs: 14, fat: 22, sugar: 3, satFat: 7 },
-      { keys: ["shake", "protein", "smoothie"], name: "Protein shake", calories: 280, protein: 32, carbs: 24, fat: 6, sugar: 16, satFat: 2 },
-      { keys: ["coffee", "latte", "milk", "juice", "tea"], name: "Beverage", calories: 140, protein: 6, carbs: 18, fat: 4, sugar: 15, satFat: 2 },
-      { keys: ["salad"], name: "Protein salad", calories: 340, protein: 26, carbs: 22, fat: 16, sugar: 8, satFat: 3 },
-      { keys: ["burger"], name: "Burger meal", calories: 720, protein: 34, carbs: 58, fat: 38, sugar: 10, satFat: 13 },
-      { keys: ["dessert", "cake", "cookie"], name: "Dessert", calories: 420, protein: 5, carbs: 58, fat: 18, sugar: 34, satFat: 10 }
-    ];
+    const geminiKeyInput = document.querySelector("#gemini-key");
+    geminiKeyInput.value = localStorage.getItem("geminiApiKey") || "";
+    geminiKeyInput.addEventListener("change", () => {
+      localStorage.setItem("geminiApiKey", geminiKeyInput.value.trim());
+    });
 
     const state = {
       entries: JSON.parse(localStorage.getItem("macroEntries") || "[]").map(normalizeEntry),
@@ -1060,20 +1056,26 @@
     });
 
     estimateBtn.addEventListener("click", async () => {
-      const selectedFileName = photoInput.files[0] ? photoInput.files[0].name : "";
-      const hint = `${foodName.value} ${selectedFileName}`.toLowerCase();
-      const matched = foodPatterns.find(item => item.keys.some(key => hint.includes(key)));
+      const file = photoInput.files[0] || null;
+      const hint = foodName.value.trim();
       const amount = Math.max(Number(servings.value) || 1, 0.25);
+      const hasGeminiKey = !!localStorage.getItem("geminiApiKey");
       estimateBtn.disabled = true;
       estimateBtn.textContent = "Estimating...";
       state.estimate = null;
 
       try {
-        if (matched) {
-          state.estimate = scaleEstimate(matched, amount, "Local keyword estimate");
+        if (file && hasGeminiKey) {
+          estimateBox.hidden = false;
+          estimateBox.innerHTML = `<strong>Analyzing photo with Gemini Vision...</strong>`;
+          state.estimate = await analyzeWithGemini(file, hint, amount);
+        } else if (hint && hasGeminiKey) {
+          estimateBox.hidden = false;
+          estimateBox.innerHTML = `<strong>Asking Gemini to estimate "${escapeHtml(hint)}"...</strong>`;
+          state.estimate = await analyzeWithGemini(null, hint, amount);
         } else {
-          const query = foodName.value.trim() || selectedFileName.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ");
-          if (!query) throw new Error("Enter a food name or upload a named photo so I can search for a macro match.");
+          const query = hint || (file ? file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ") : "");
+          if (!query) throw new Error("Enter a food name or upload a photo to estimate macros.");
           estimateBox.hidden = false;
           estimateBox.innerHTML = `<strong>Searching nutrition databases for "${escapeHtml(query)}"...</strong>`;
           state.estimate = await lookupFoodMacros(query, amount);
@@ -1081,7 +1083,7 @@
         renderEstimate();
       } catch (error) {
         estimateBox.hidden = false;
-        estimateBox.innerHTML = `<strong>Could not estimate this food.</strong><p class="note">${escapeHtml(error.message)} No default macros were used.</p>`;
+        estimateBox.innerHTML = `<strong>Could not estimate this food.</strong><p class="note">${escapeHtml(error.message)}</p>`;
       } finally {
         estimateBtn.disabled = false;
         estimateBtn.textContent = "Estimate Macros";
@@ -1187,6 +1189,59 @@
         sugar: 0,
         satFat: 0,
         ...entry
+      };
+    }
+
+    async function analyzeWithGemini(file, foodHint, amount) {
+      const apiKey = localStorage.getItem("geminiApiKey");
+      if (!apiKey) throw new Error("Add your Gemini API key in the Data panel to enable photo analysis.");
+      const parts = [];
+      if (file) {
+        const base64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result.split(",")[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+        parts.push({ inlineData: { mimeType: file.type || "image/jpeg", data: base64 } });
+      }
+      const prompt = `Analyze this ${file ? "food photo" : "food item"} and estimate the macronutrients per serving.${foodHint ? ` The food is: ${foodHint}.` : ""}${amount !== 1 ? ` The user wants ${amount} servings.` : ""}
+
+If the image shows a nutrition label, use those exact values (scaled by servings).
+Otherwise, estimate based on what you see in the photo or the food description.
+
+Respond ONLY with valid JSON, no markdown, no explanation:
+{"name":"food name","calories":0,"protein":0,"carbs":0,"fat":0,"sugar":0,"satFat":0}
+
+All values should be numbers (grams except calories in kcal), already scaled for ${amount} serving(s).`;
+      parts.push({ text: prompt });
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contents: [{ parts }] })
+        }
+      );
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error?.message || `Gemini API error (${response.status})`);
+      }
+      const data = await response.json();
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error("Gemini did not return a valid macro estimate.");
+      const parsed = JSON.parse(jsonMatch[0]);
+      return {
+        name: foodName.value.trim() || parsed.name || "Unknown food",
+        meal: mealSlot.value,
+        calories: Math.round(Number(parsed.calories) || 0),
+        protein: Math.round(Number(parsed.protein) || 0),
+        carbs: Math.round(Number(parsed.carbs) || 0),
+        fat: Math.round(Number(parsed.fat) || 0),
+        sugar: Math.round(Number(parsed.sugar) || 0),
+        satFat: Math.round(Number(parsed.satFat) || 0),
+        source: file ? "Gemini Vision analysis" : "Gemini text analysis"
       };
     }
 
