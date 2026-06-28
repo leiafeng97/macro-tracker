@@ -131,6 +131,17 @@
       font-size: 12px;
     }
 
+    button.danger {
+      width: auto;
+      min-height: 36px;
+      padding: 8px 12px;
+      border: 1px solid rgba(255, 129, 140, 0.3);
+      background: rgba(255, 129, 140, 0.12);
+      color: var(--danger);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
     .day-strip {
       display: grid;
       grid-template-columns: repeat(4, minmax(142px, 1fr));
@@ -147,6 +158,13 @@
       border-radius: 26px;
       background: rgba(29, 31, 47, 0.56);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .day-chip:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+      background: rgba(34, 36, 50, 0.72);
     }
 
     .day-chip.active {
@@ -190,7 +208,10 @@
     .meal-card,
     .add-panel,
     .average-panel,
-    .targets-note {
+    .targets-note,
+    .favourites-panel,
+    .data-panel,
+    .weekly-panel {
       border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 30px;
       background: rgba(30, 33, 51, 0.82);
@@ -274,6 +295,19 @@
       text-transform: none;
     }
 
+    .bar-remaining {
+      color: rgba(251, 248, 242, 0.3);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: none;
+      margin-left: 6px;
+    }
+
+    .bar-remaining.over {
+      color: var(--danger);
+    }
+
     .track {
       height: 12px;
       overflow: hidden;
@@ -303,6 +337,13 @@
     .meal-list {
       display: grid;
       gap: 13px;
+    }
+
+    .meal-actions-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 13px;
+      flex-wrap: wrap;
     }
 
     .meal-card {
@@ -391,13 +432,15 @@
       font-weight: 900;
     }
 
-    .average-panel {
+    .average-panel,
+    .weekly-panel {
       padding: 24px 28px;
       margin-top: 22px;
       background: rgba(31, 39, 63, 0.7);
     }
 
-    .average-panel h2 {
+    .average-panel h2,
+    .weekly-panel h2 {
       margin: 0 0 24px;
       color: rgba(251, 248, 242, 0.34);
       font-size: 14px;
@@ -427,12 +470,73 @@
       text-transform: uppercase;
     }
 
+    .weekly-row {
+      display: grid;
+      grid-template-columns: 70px 1fr 60px;
+      gap: 12px;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 13px;
+    }
+
+    .weekly-row:last-child {
+      border-bottom: none;
+    }
+
+    .weekly-row .day-label {
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 12px;
+    }
+
+    .weekly-row .weekly-bars {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+    }
+
+    .weekly-row .weekly-bars .track {
+      height: 6px;
+    }
+
+    .weekly-row .weekly-cal {
+      text-align: right;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
     .targets-note {
       margin-top: 24px;
       padding: 16px 20px;
       border-radius: 20px;
       color: rgba(251, 248, 242, 0.34);
       font-weight: 800;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .targets-note:hover {
+      border-color: rgba(255, 255, 255, 0.14);
+    }
+
+    .targets-edit {
+      margin-top: 24px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      background: rgba(30, 33, 51, 0.82);
+    }
+
+    .targets-edit h3 {
+      margin: 0 0 14px;
+      font-size: 15px;
+    }
+
+    .targets-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
     }
 
     .add-panel {
@@ -444,6 +548,41 @@
     .add-panel h2 {
       margin: 0 0 16px;
       font-size: 18px;
+    }
+
+    .add-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 16px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    .add-tab {
+      flex: 1;
+      min-height: 38px;
+      border: none;
+      border-radius: 0;
+      background: #17192a;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .add-tab.active {
+      background: #252943;
+      color: var(--ink);
+    }
+
+    .add-mode {
+      display: none;
+    }
+
+    .add-mode.active {
+      display: block;
     }
 
     .form-grid {
@@ -524,6 +663,116 @@
       text-align: center;
     }
 
+    .favourites-panel {
+      padding: 22px;
+      margin-top: 16px;
+      border-radius: 26px;
+    }
+
+    .favourites-panel h3 {
+      margin: 0 0 12px;
+      font-size: 15px;
+      color: rgba(251, 248, 242, 0.5);
+    }
+
+    .fav-list {
+      display: grid;
+      gap: 6px;
+    }
+
+    .fav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.03);
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+
+    .fav-item:hover {
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .fav-item .fav-name {
+      font-weight: 700;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .fav-item .fav-meta {
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .fav-item .fav-actions {
+      display: flex;
+      gap: 4px;
+      flex: 0 0 auto;
+    }
+
+    .fav-item .fav-actions button {
+      width: auto;
+      min-height: 26px;
+      padding: 4px 8px;
+      font-size: 11px;
+    }
+
+    .data-panel {
+      padding: 22px;
+      margin-top: 16px;
+      border-radius: 26px;
+    }
+
+    .data-panel h3 {
+      margin: 0 0 12px;
+      font-size: 15px;
+      color: rgba(251, 248, 242, 0.5);
+    }
+
+    .data-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 20px;
+      border-radius: 16px;
+      background: #252943;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: slideUp 0.25s ease-out;
+    }
+
+    .toast button {
+      width: auto;
+      min-height: 32px;
+      padding: 6px 14px;
+      font-size: 13px;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+      to { transform: translateX(-50%) translateY(0); opacity: 1; }
+    }
+
     @media (max-width: 680px) {
       .app {
         padding-top: 34px;
@@ -557,7 +806,8 @@
 
       .average-grid,
       .form-grid,
-      .macro-row {
+      .macro-row,
+      .targets-grid {
         grid-template-columns: repeat(2, 1fr);
       }
     }
@@ -579,7 +829,8 @@
 
       .average-grid,
       .form-grid,
-      .macro-row {
+      .macro-row,
+      .targets-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -614,51 +865,101 @@
     <main class="content-grid">
       <section>
         <div class="meal-list" id="meal-list"></div>
+        <section class="weekly-panel" aria-labelledby="weekly-title">
+          <h2 id="weekly-title">7-day overview</h2>
+          <div id="weekly-grid"></div>
+        </section>
         <section class="average-panel" aria-labelledby="average-title">
           <h2 id="average-title">20-day average</h2>
           <div class="average-grid" id="average-grid"></div>
         </section>
-        <div class="targets-note">Targets: 1568 kcal - 90g P - 209g C - 45g F - &lt;42g sugar - &lt;18g saturated fat</div>
+        <div class="targets-note" id="targets-note"></div>
+        <div id="targets-edit-container"></div>
       </section>
 
       <section class="add-panel" aria-labelledby="photo-title">
         <h2 id="photo-title">Add a Meal</h2>
 
-        <label for="meal-photo">Meal photo</label>
-        <input id="meal-photo" type="file" accept="image/*">
-        <div id="preview" class="preview">Choose a meal photo to preview it here.</div>
-
-        <div class="form-grid">
-          <div>
-            <label for="meal-slot">Meal</label>
-            <select id="meal-slot">
-              <option>Breakfast</option>
-              <option>Lunch</option>
-              <option>Dinner</option>
-              <option>Snack</option>
-              <option>Beverage</option>
-              <option>Evening</option>
-            </select>
-          </div>
-          <div>
-            <label for="servings">Servings</label>
-            <input id="servings" type="number" min="0.25" step="0.25" value="1">
-          </div>
+        <div class="add-tabs">
+          <button class="add-tab active" data-add-mode="estimate">Estimate</button>
+          <button class="add-tab" data-add-mode="manual">Manual</button>
         </div>
 
-        <label for="food-name" style="margin-top: 13px;">Food name or hint</label>
-        <input id="food-name" placeholder="e.g. chicken rice, salmon bowl">
+        <div id="mode-estimate" class="add-mode active">
+          <label for="meal-photo">Meal photo</label>
+          <input id="meal-photo" type="file" accept="image/*">
+          <div id="preview" class="preview">Choose a meal photo to preview it here.</div>
 
-        <button id="estimate-btn" type="button" style="margin-top: 14px;">Estimate Macros</button>
+          <div class="form-grid">
+            <div>
+              <label for="meal-slot">Meal</label>
+              <select id="meal-slot">
+                <option>Breakfast</option>
+                <option>Lunch</option>
+                <option>Dinner</option>
+                <option>Snack</option>
+                <option>Beverage</option>
+                <option>Evening</option>
+              </select>
+            </div>
+            <div>
+              <label for="servings">Servings</label>
+              <input id="servings" type="number" min="0.25" step="0.25" value="1">
+            </div>
+          </div>
 
-        <div id="estimate" class="estimate" hidden></div>
-        <p class="note">Known items use curated estimates; unknown items search Open Food Facts, then USDA FoodData Central. Treat estimates as quick drafts, not label-grade nutrition advice.</p>
+          <label for="food-name" style="margin-top: 13px;">Food name or hint</label>
+          <input id="food-name" placeholder="e.g. chicken rice, salmon bowl">
+
+          <button id="estimate-btn" type="button" style="margin-top: 14px;">Estimate Macros</button>
+
+          <div id="estimate" class="estimate" hidden></div>
+          <p class="note">Known items use curated estimates; unknown items search Open Food Facts, then USDA FoodData Central. Treat estimates as quick drafts, not label-grade nutrition advice.</p>
+        </div>
+
+        <div id="mode-manual" class="add-mode">
+          <div class="form-grid">
+            <div>
+              <label for="manual-meal">Meal</label>
+              <select id="manual-meal">
+                <option>Breakfast</option>
+                <option>Lunch</option>
+                <option>Dinner</option>
+                <option>Snack</option>
+                <option>Beverage</option>
+                <option>Evening</option>
+              </select>
+            </div>
+            <div>
+              <label for="manual-name">Food name</label>
+              <input id="manual-name" type="text" placeholder="e.g. grilled chicken">
+            </div>
+            <div><label for="manual-calories">Calories</label><input id="manual-calories" type="number" min="0" step="1" value="0"></div>
+            <div><label for="manual-protein">Protein (g)</label><input id="manual-protein" type="number" min="0" step="1" value="0"></div>
+            <div><label for="manual-carbs">Carbs (g)</label><input id="manual-carbs" type="number" min="0" step="1" value="0"></div>
+            <div><label for="manual-fat">Fat (g)</label><input id="manual-fat" type="number" min="0" step="1" value="0"></div>
+            <div><label for="manual-sugar">Sugar (g)</label><input id="manual-sugar" type="number" min="0" step="1" value="0"></div>
+            <div><label for="manual-sat-fat">Sat fat (g)</label><input id="manual-sat-fat" type="number" min="0" step="1" value="0"></div>
+          </div>
+          <button id="manual-add-btn" type="button" style="margin-top: 14px;">Add to Daily Log</button>
+        </div>
+
+        <div id="favourites-container"></div>
+
+        <div class="data-panel" style="margin-top: 16px; border: 1px solid rgba(255,255,255,0.06);">
+          <h3>Data</h3>
+          <div class="data-actions">
+            <button class="secondary" id="export-btn" type="button">Export JSON</button>
+            <button class="secondary" id="import-btn" type="button">Import JSON</button>
+            <input id="import-file" type="file" accept=".json,application/json" hidden>
+          </div>
+        </div>
       </section>
     </main>
   </div>
 
   <script>
-    const dailyTargets = {
+    const defaultTargets = {
       protein: { label: "Protein", short: "PRO", target: 90, unit: "g", type: "minimum", color: "protein" },
       carbs: { label: "Carbs", short: "CARB", target: 209, unit: "g", type: "target", color: "carbs" },
       fat: { label: "Fat", short: "FAT", target: 45, unit: "g", type: "target", color: "fat" },
@@ -666,6 +967,12 @@
       satFat: { label: "Saturated fat", short: "SAT", target: 18, unit: "g", type: "maximum", color: "fat" },
       calories: { label: "Calories", short: "CAL", target: 1568, unit: "", type: "maximum", color: "cal" }
     };
+
+    const savedTargets = JSON.parse(localStorage.getItem("macroTargets") || "null");
+    const dailyTargets = {};
+    for (const [key, def] of Object.entries(defaultTargets)) {
+      dailyTargets[key] = { ...def, target: savedTargets ? (savedTargets[key] ?? def.target) : def.target };
+    }
 
     const mealIcons = {
       Breakfast: "🌅",
@@ -695,8 +1002,11 @@
 
     const state = {
       entries: JSON.parse(localStorage.getItem("macroEntries") || "[]").map(normalizeEntry),
+      favourites: JSON.parse(localStorage.getItem("macroFavourites") || "[]"),
       estimate: null,
-      editingId: null
+      editingId: null,
+      editingTargets: false,
+      undoStack: []
     };
 
     const photoInput = document.querySelector("#meal-photo");
@@ -713,8 +1023,22 @@
     const macroBars = document.querySelector("#macro-bars");
     const mealList = document.querySelector("#meal-list");
     const averageGrid = document.querySelector("#average-grid");
+    const weeklyGrid = document.querySelector("#weekly-grid");
+    const targetsNote = document.querySelector("#targets-note");
+    const targetsEditContainer = document.querySelector("#targets-edit-container");
+    const favouritesContainer = document.querySelector("#favourites-container");
 
     logDate.value = new Date().toISOString().slice(0, 10);
+
+    // Add mode tabs
+    document.querySelectorAll(".add-tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".add-tab").forEach(t => t.classList.remove("active"));
+        document.querySelectorAll(".add-mode").forEach(m => m.classList.remove("active"));
+        tab.classList.add("active");
+        document.querySelector(`#mode-${tab.dataset.addMode}`).classList.add("active");
+      });
+    });
 
     photoInput.addEventListener("change", () => {
       const file = photoInput.files[0];
@@ -764,7 +1088,95 @@
       }
     });
 
+    // Manual add
+    document.querySelector("#manual-add-btn").addEventListener("click", () => {
+      const name = document.querySelector("#manual-name").value.trim();
+      if (!name) { document.querySelector("#manual-name").focus(); return; }
+      const entry = {
+        id: crypto.randomUUID(),
+        date: logDate.value,
+        name,
+        meal: document.querySelector("#manual-meal").value,
+        calories: readNumber("#manual-calories"),
+        protein: readNumber("#manual-protein"),
+        carbs: readNumber("#manual-carbs"),
+        fat: readNumber("#manual-fat"),
+        sugar: readNumber("#manual-sugar"),
+        satFat: readNumber("#manual-sat-fat"),
+        source: "Manual entry"
+      };
+      state.entries.push(entry);
+      save();
+      renderLog();
+      document.querySelector("#manual-name").value = "";
+      ["#manual-calories", "#manual-protein", "#manual-carbs", "#manual-fat", "#manual-sugar", "#manual-sat-fat"].forEach(s => {
+        document.querySelector(s).value = "0";
+      });
+    });
+
+    // Export / Import
+    document.querySelector("#export-btn").addEventListener("click", () => {
+      const data = { entries: state.entries, favourites: state.favourites, targets: {} };
+      for (const [key, t] of Object.entries(dailyTargets)) data.targets[key] = t.target;
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `macro-tracker-${logDate.value}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    document.querySelector("#import-btn").addEventListener("click", () => {
+      document.querySelector("#import-file").click();
+    });
+
+    document.querySelector("#import-file").addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+        if (data.entries && Array.isArray(data.entries)) {
+          state.entries = data.entries.map(normalizeEntry);
+          save();
+        }
+        if (data.favourites && Array.isArray(data.favourites)) {
+          state.favourites = data.favourites;
+          saveFavourites();
+        }
+        if (data.targets) {
+          for (const [key, val] of Object.entries(data.targets)) {
+            if (dailyTargets[key]) dailyTargets[key].target = val;
+          }
+          saveTargets();
+        }
+        renderLog();
+        renderFavourites();
+        showToast("Data imported successfully");
+      } catch {
+        showToast("Invalid JSON file");
+      }
+      e.target.value = "";
+    });
+
     logDate.addEventListener("change", renderLog);
+
+    // Day strip click navigation
+    dayStrip.addEventListener("click", (e) => {
+      const chip = e.target.closest(".day-chip");
+      if (!chip) return;
+      const dateKey = chip.dataset.date;
+      if (dateKey) {
+        logDate.value = dateKey;
+        renderLog();
+      }
+    });
+
+    // Targets click to edit
+    targetsNote.addEventListener("click", () => {
+      state.editingTargets = !state.editingTargets;
+      renderTargets();
+    });
 
     function normalizeEntry(entry) {
       return {
@@ -885,8 +1297,14 @@
           ${macroCell("Sat fat", `${item.satFat}g`)}
         </div>
         <button id="add-estimate" type="button" style="margin-top: 12px;">Add to Daily Log</button>
+        <button id="save-fav" class="secondary" type="button" style="margin-top: 8px;">Save as Favourite</button>
       `;
       document.querySelector("#add-estimate").addEventListener("click", addEstimate);
+      document.querySelector("#save-fav").addEventListener("click", () => {
+        if (!state.estimate) return;
+        saveFavourite(state.estimate);
+        showToast("Saved to favourites");
+      });
     }
 
     function addEstimate() {
@@ -902,13 +1320,81 @@
     }
 
     function removeEntry(id) {
-      state.entries = state.entries.filter(entry => entry.id !== id);
+      const entry = state.entries.find(e => e.id === id);
+      if (!entry) return;
+      state.entries = state.entries.filter(e => e.id !== id);
       save();
       renderLog();
+      showToast("Entry deleted", () => {
+        state.entries.push(entry);
+        save();
+        renderLog();
+      });
     }
 
     function save() {
       localStorage.setItem("macroEntries", JSON.stringify(state.entries));
+    }
+
+    function saveFavourites() {
+      localStorage.setItem("macroFavourites", JSON.stringify(state.favourites));
+    }
+
+    function saveTargets() {
+      const t = {};
+      for (const [key, val] of Object.entries(dailyTargets)) t[key] = val.target;
+      localStorage.setItem("macroTargets", JSON.stringify(t));
+    }
+
+    function saveFavourite(item) {
+      const existing = state.favourites.find(f => f.name === item.name && f.meal === item.meal);
+      if (existing) return;
+      state.favourites.push({
+        id: crypto.randomUUID(),
+        name: item.name,
+        meal: item.meal,
+        calories: item.calories,
+        protein: item.protein,
+        carbs: item.carbs,
+        fat: item.fat,
+        sugar: item.sugar,
+        satFat: item.satFat
+      });
+      saveFavourites();
+      renderFavourites();
+    }
+
+    function addFavouriteToLog(fav) {
+      state.entries.push({
+        ...fav,
+        id: crypto.randomUUID(),
+        date: logDate.value,
+        source: "Favourite"
+      });
+      save();
+      renderLog();
+    }
+
+    function removeFavourite(id) {
+      state.favourites = state.favourites.filter(f => f.id !== id);
+      saveFavourites();
+      renderFavourites();
+    }
+
+    function copyPreviousDay() {
+      const selected = parseDate(logDate.value);
+      const prevKey = toDateKey(shiftDate(selected, -1));
+      const prevEntries = state.entries.filter(e => e.date === prevKey);
+      if (!prevEntries.length) {
+        showToast("No entries found for previous day");
+        return;
+      }
+      prevEntries.forEach(e => {
+        state.entries.push({ ...e, id: crypto.randomUUID(), date: logDate.value });
+      });
+      save();
+      renderLog();
+      showToast(`Copied ${prevEntries.length} entries from previous day`);
     }
 
     function renderLog() {
@@ -921,7 +1407,10 @@
       renderLegend(totals);
       renderMacroBars(totals);
       renderMeals(todaysEntries);
+      renderWeekly();
       renderAverages();
+      renderTargets();
+      renderFavourites();
     }
 
     function renderDayStrip(selectedDate) {
@@ -931,7 +1420,7 @@
         const key = toDateKey(day);
         const totals = sumEntries(state.entries.filter(entry => entry.date === key));
         return `
-          <article class="day-chip ${key === selectedDate ? "active" : ""}">
+          <article class="day-chip ${key === selectedDate ? "active" : ""}" data-date="${key}">
             <span>${dayLabel(day)}</span>
             <strong>${totals.calories}</strong>
             <div class="mini-bars">
@@ -964,12 +1453,19 @@
     }
 
     function renderMeals(entries) {
+      const actionsBar = `
+        <div class="meal-actions-bar">
+          <button class="secondary" type="button" id="copy-prev-day">Copy previous day</button>
+        </div>
+      `;
+
       if (!entries.length) {
-        mealList.innerHTML = '<div class="empty">No meals logged for this day yet. Add a meal photo below to start the log.</div>';
+        mealList.innerHTML = actionsBar + '<div class="empty">No meals logged for this day yet.</div>';
+        document.querySelector("#copy-prev-day").addEventListener("click", copyPreviousDay);
         return;
       }
 
-      mealList.innerHTML = mealOrder.map(meal => {
+      mealList.innerHTML = actionsBar + mealOrder.map(meal => {
         const mealEntries = entries.filter(entry => entry.meal === meal);
         if (!mealEntries.length) return "";
         const totals = sumEntries(mealEntries);
@@ -984,6 +1480,7 @@
                   <div class="item-row">
                     <span>${escapeHtml(entry.name)}</span>
                     <div class="item-actions">
+                      <button type="button" data-fav-entry="${entry.id}" title="Save as favourite">★</button>
                       <button type="button" data-edit-entry="${entry.id}">Edit</button>
                       <button type="button" data-delete-entry="${entry.id}">Delete</button>
                     </div>
@@ -1001,12 +1498,24 @@
         `;
       }).join("");
 
+      document.querySelector("#copy-prev-day").addEventListener("click", copyPreviousDay);
+
       document.querySelectorAll("[data-edit-entry]").forEach(button => {
         button.addEventListener("click", () => startEdit(button.dataset.editEntry));
       });
 
       document.querySelectorAll("[data-delete-entry]").forEach(button => {
         button.addEventListener("click", () => removeEntry(button.dataset.deleteEntry));
+      });
+
+      document.querySelectorAll("[data-fav-entry]").forEach(button => {
+        button.addEventListener("click", () => {
+          const entry = state.entries.find(e => e.id === button.dataset.favEntry);
+          if (entry) {
+            saveFavourite(entry);
+            showToast("Saved to favourites");
+          }
+        });
       });
     }
 
@@ -1035,6 +1544,11 @@
         state.editingId = null;
         estimateBox.hidden = true;
       });
+      // Switch to estimate tab to show the edit form
+      document.querySelectorAll(".add-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".add-mode").forEach(m => m.classList.remove("active"));
+      document.querySelector('[data-add-mode="estimate"]').classList.add("active");
+      document.querySelector("#mode-estimate").classList.add("active");
       estimateBox.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
@@ -1075,18 +1589,111 @@
       return Math.max(Math.round(Number(document.querySelector(selector).value) || 0), 0);
     }
 
+    function renderWeekly() {
+      const selected = parseDate(logDate.value);
+      const rows = Array.from({ length: 7 }, (_, i) => {
+        const day = shiftDate(selected, -6 + i);
+        const key = toDateKey(day);
+        const totals = sumEntries(state.entries.filter(e => e.date === key));
+        const isToday = key === logDate.value;
+        return `
+          <div class="weekly-row" style="${isToday ? "background: rgba(255,255,255,0.03); border-radius: 10px; padding: 8px 6px;" : ""}">
+            <div class="day-label">${dayLabel(day)}</div>
+            <div class="weekly-bars">
+              <div class="track"><i class="bar-fill protein" style="--fill:${ratio(totals.protein, dailyTargets.protein.target)}%"></i></div>
+              <div class="track"><i class="bar-fill carbs" style="--fill:${ratio(totals.carbs, dailyTargets.carbs.target)}%"></i></div>
+              <div class="track"><i class="bar-fill fat" style="--fill:${ratio(totals.fat, dailyTargets.fat.target)}%"></i></div>
+            </div>
+            <div class="weekly-cal">${totals.calories}</div>
+          </div>
+        `;
+      });
+      weeklyGrid.innerHTML = rows.join("");
+    }
+
     function renderAverages() {
       const selected = parseDate(logDate.value);
       const dateKeys = Array.from({ length: 20 }, (_, index) => toDateKey(shiftDate(selected, -index)));
       const entries = state.entries.filter(entry => dateKeys.includes(entry.date));
+      const daysWithData = new Set(entries.map(e => e.date)).size || 1;
       const totals = sumEntries(entries);
-      const divisor = 20;
       averageGrid.innerHTML = `
-        ${averageCell(Math.round(totals.calories / divisor), "CAL", "cal")}
-        ${averageCell(`${Math.round(totals.protein / divisor)}g`, "PRO", "protein")}
-        ${averageCell(`${Math.round(totals.carbs / divisor)}g`, "CARB", "carbs")}
-        ${averageCell(`${Math.round(totals.fat / divisor)}g`, "FAT", "fat")}
+        ${averageCell(Math.round(totals.calories / daysWithData), "CAL", "cal")}
+        ${averageCell(`${Math.round(totals.protein / daysWithData)}g`, "PRO", "protein")}
+        ${averageCell(`${Math.round(totals.carbs / daysWithData)}g`, "CARB", "carbs")}
+        ${averageCell(`${Math.round(totals.fat / daysWithData)}g`, "FAT", "fat")}
       `;
+    }
+
+    function renderTargets() {
+      const t = dailyTargets;
+      targetsNote.innerHTML = `Targets: ${t.calories.target} kcal · ${t.protein.target}g P · ${t.carbs.target}g C · ${t.fat.target}g F · &lt;${t.sugar.target}g sugar · &lt;${t.satFat.target}g sat fat <span style="margin-left:8px;font-size:11px;opacity:0.5;">tap to edit</span>`;
+
+      if (state.editingTargets) {
+        targetsEditContainer.innerHTML = `
+          <div class="targets-edit">
+            <h3>Edit Targets</h3>
+            <div class="targets-grid">
+              <div><label for="t-calories">Calories</label><input id="t-calories" type="number" min="0" value="${t.calories.target}"></div>
+              <div><label for="t-protein">Protein (g)</label><input id="t-protein" type="number" min="0" value="${t.protein.target}"></div>
+              <div><label for="t-carbs">Carbs (g)</label><input id="t-carbs" type="number" min="0" value="${t.carbs.target}"></div>
+              <div><label for="t-fat">Fat (g)</label><input id="t-fat" type="number" min="0" value="${t.fat.target}"></div>
+              <div><label for="t-sugar">Sugar (g)</label><input id="t-sugar" type="number" min="0" value="${t.sugar.target}"></div>
+              <div><label for="t-sat-fat">Sat fat (g)</label><input id="t-sat-fat" type="number" min="0" value="${t.satFat.target}"></div>
+            </div>
+            <button id="save-targets" type="button" style="margin-top: 14px;">Save Targets</button>
+          </div>
+        `;
+        document.querySelector("#save-targets").addEventListener("click", () => {
+          dailyTargets.calories.target = readNumber("#t-calories");
+          dailyTargets.protein.target = readNumber("#t-protein");
+          dailyTargets.carbs.target = readNumber("#t-carbs");
+          dailyTargets.fat.target = readNumber("#t-fat");
+          dailyTargets.sugar.target = readNumber("#t-sugar");
+          dailyTargets.satFat.target = readNumber("#t-sat-fat");
+          saveTargets();
+          state.editingTargets = false;
+          renderLog();
+        });
+      } else {
+        targetsEditContainer.innerHTML = "";
+      }
+    }
+
+    function renderFavourites() {
+      if (!state.favourites.length) {
+        favouritesContainer.innerHTML = "";
+        return;
+      }
+      favouritesContainer.innerHTML = `
+        <div class="favourites-panel">
+          <h3>Favourites</h3>
+          <div class="fav-list">
+            ${state.favourites.map(fav => `
+              <div class="fav-item">
+                <span class="fav-name">${escapeHtml(fav.name)}</span>
+                <span class="fav-meta">${fav.calories} kcal · ${fav.protein}p ${fav.carbs}c ${fav.fat}f</span>
+                <div class="fav-actions">
+                  <button class="secondary" type="button" data-add-fav="${fav.id}">Add</button>
+                  <button class="secondary" type="button" data-del-fav="${fav.id}">✕</button>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `;
+      favouritesContainer.querySelectorAll("[data-add-fav]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const fav = state.favourites.find(f => f.id === btn.dataset.addFav);
+          if (fav) addFavouriteToLog(fav);
+        });
+      });
+      favouritesContainer.querySelectorAll("[data-del-fav]").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          removeFavourite(btn.dataset.delFav);
+        });
+      });
     }
 
     function sumEntries(entries) {
@@ -1103,12 +1710,20 @@
     function barRow(label, value, target, className) {
       const diff = value - target.target;
       const over = target.type !== "minimum" && diff > 0;
-      const shownDiff = diff > 0 ? ` (+${diff})` : "";
+      const remaining = target.target - value;
+      let remainingText;
+      if (target.type === "minimum") {
+        remainingText = remaining > 0 ? `${remaining}${target.unit} to go` : "target met";
+      } else {
+        remainingText = remaining > 0 ? `${remaining}${target.unit} left` : `${Math.abs(remaining)}${target.unit} over`;
+      }
+      const remainingClass = (target.type !== "minimum" && remaining < 0) || (target.type === "minimum" && remaining > 0) ? "" : "";
+      const isOver = target.type !== "minimum" && remaining < 0;
       return `
         <div class="bar-row">
           <div class="bar-label">
-            <span>${label}</span>
-            <strong>${formatValue(value, target.unit)} / ${formatValue(target.target, target.unit)}${shownDiff}</strong>
+            <span>${label} <span class="bar-remaining ${isOver ? "over" : ""}">${remainingText}</span></span>
+            <strong>${formatValue(value, target.unit)} / ${formatValue(target.target, target.unit)}</strong>
           </div>
           <div class="track"><i class="bar-fill ${className} ${over ? "over" : ""}" style="--fill:${ratio(value, target.target)}%"></i></div>
         </div>
@@ -1163,6 +1778,25 @@
         '"': "&quot;",
         "'": "&#039;"
       })[char]);
+    }
+
+    let toastTimer;
+    function showToast(message, undoFn) {
+      const existing = document.querySelector(".toast");
+      if (existing) existing.remove();
+      clearTimeout(toastTimer);
+      const toast = document.createElement("div");
+      toast.className = "toast";
+      toast.innerHTML = message + (undoFn ? ' <button type="button" class="secondary">Undo</button>' : "");
+      document.body.appendChild(toast);
+      if (undoFn) {
+        toast.querySelector("button").addEventListener("click", () => {
+          undoFn();
+          toast.remove();
+          clearTimeout(toastTimer);
+        });
+      }
+      toastTimer = setTimeout(() => toast.remove(), 4000);
     }
 
     renderLog();
